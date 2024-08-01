@@ -3,7 +3,7 @@
 namespace ConsoleClient;
 internal class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         string ip = "127.0.0.1";
         int port = 1024;
@@ -27,7 +27,7 @@ internal class Program
                 $"me: " +
                 $"{sendStr}");
 
-            bytesRead = client.Receive();
+            bytesRead = await client.Receive();
             Console.WriteLine(
                 $"[{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}] " +
                 $"server: " +

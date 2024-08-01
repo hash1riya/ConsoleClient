@@ -40,10 +40,10 @@ public class Client
             Debug.WriteLine(ex.Message);
         }
     }
-    public int Receive() => this.socket.Receive(this.Buffer);
-    public void Send(string strSend)
+    public async Task<int> Receive() => await this.socket.ReceiveAsync(this.Buffer);
+    public async void Send(string strSend)
     {
         if (this.socket != null)
-            this.socket.Send(System.Text.Encoding.UTF8.GetBytes(strSend));
+            await this.socket.SendAsync(System.Text.Encoding.UTF8.GetBytes(strSend));
     }
 }
