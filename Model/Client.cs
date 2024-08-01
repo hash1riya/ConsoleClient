@@ -6,7 +6,7 @@ namespace ConsoleClient.Model;
 public class Client
 {
     IPEndPoint endp;
-    Socket socket;
+    public Socket socket;
     public byte[] Buffer = new byte[1024];
 
     public Client(string ip, int port)

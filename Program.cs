@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net.Sockets;
 
 namespace ConsoleClient;
 internal class Program
@@ -9,29 +10,39 @@ internal class Program
         int port = 1024;
         Model.Client client = new Model.Client(ip, port);
 
-        string sendStr = "Hello server";
+        string sendStr = string.Empty;
         int bytesRead;
         try
         {
-            client.Connect();
+            client.socket.Connect(ip, port);
 
-            if(client.IsConnected())
+            if (client.IsConnected())
+            {
                 Console.WriteLine(
                     $"[{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}] " +
                     $"SYSTEM: " +
                     $"Connected!");
 
-            client.Send(sendStr);
-            Console.WriteLine(
-                $"[{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}] " +
-                $"me: " +
-                $"{sendStr}");
+                while (true)
+                {
+                    Console.Write("> ");
+                    sendStr = Console.ReadLine();
 
-            bytesRead = await client.Receive();
-            Console.WriteLine(
-                $"[{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}] " +
-                $"server: " +
-                $"{System.Text.Encoding.UTF8.GetString(client.Buffer, 0, bytesRead)}");
+                    if (!string.IsNullOrEmpty(sendStr) && sendStr != "exit")
+                    {
+                        await client.socket.SendAsync(System.Text.Encoding.UTF8.GetBytes(sendStr));
+
+                        bytesRead = await client.Receive();
+                        Console.WriteLine(
+                            $"[{DateTime.Now.ToString("dd/MM/yyyy HH:mm")}] " +
+                            $"server: " +
+                            $"{System.Text.Encoding.UTF8.GetString(client.Buffer, 0, bytesRead)}");
+                    }
+                    else if (sendStr == "exit")
+                        break;
+                }
+            }
+
         }
         catch (Exception ex)
         {
